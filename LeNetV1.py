@@ -9,8 +9,8 @@ def LeNet_V1(x, keepProbDropout):
     sigma = 0.1
     
     # TODO: Layer 1: Convolutional. Input = 32x32x1. Output = 28x28x6.
-    wc1 = tf.Variable(tf.truncated_normal(shape = [5,5,3,6], mean = mu, stddev = sigma))
-    bc1 = tf.Variable(tf.zeros(6))
+    wc1 = tf.Variable(tf.truncated_normal(shape = [5,5,3,6], mean = mu, stddev = sigma), name='wc1')
+    bc1 = tf.Variable(tf.zeros(6), name='bc1')
     stridesc1 = [1,1,1,1]
     conv1mat = tf.nn.conv2d(x, wc1, stridesc1, padding = 'VALID')
     conv1out = tf.nn.bias_add(conv1mat, bc1)
@@ -24,8 +24,8 @@ def LeNet_V1(x, keepProbDropout):
     pool1out = tf.nn.max_pool(conv1relu, ksizep1, stridesp1, padding = 'SAME')
     
     # TODO: Layer 2: Convolutional. Output = 10x10x16.
-    wc2 = tf.Variable(tf.truncated_normal(shape = [5,5,6,16], mean = mu, stddev = sigma))
-    bc2 = tf.Variable(tf.zeros(16))
+    wc2 = tf.Variable(tf.truncated_normal(shape = [5,5,6,16], mean = mu, stddev = sigma), name='wc2')
+    bc2 = tf.Variable(tf.zeros(16), name='bc2')
     stridesc2 = [1,1,1,1]
     conv2mat = tf.nn.conv2d(pool1out, wc2, stridesc2, padding = 'VALID')
     conv2out = tf.nn.bias_add(conv2mat, bc2)
@@ -42,8 +42,8 @@ def LeNet_V1(x, keepProbDropout):
     convFlatten = tf.contrib.layers.flatten(pool2out)
     
     # TODO: Layer 3: Fully Connected. Input = 400. Output = 120.
-    wfc1 = tf.Variable(tf.truncated_normal(shape = [400, 120], mean = mu, stddev = sigma))
-    bfc1 = tf.Variable(tf.zeros(120))
+    wfc1 = tf.Variable(tf.truncated_normal(shape = [400, 120], mean = mu, stddev = sigma), name='wfc1')
+    bfc1 = tf.Variable(tf.zeros(120), name='bfc1')
     fc1mat = tf.matmul(convFlatten, wfc1)
     fc1out = tf.add(fc1mat, bfc1)
     
@@ -54,8 +54,8 @@ def LeNet_V1(x, keepProbDropout):
     fc1dropout = tf.nn.dropout(fc1relu, keepProbDropout)
 
     # TODO: Layer 4: Fully Connected. Input = 120. Output = 84.
-    wfc2 = tf.Variable(tf.truncated_normal(shape = [120, 84], mean = mu, stddev = sigma))
-    bfc2 = tf.Variable(tf.zeros(84))
+    wfc2 = tf.Variable(tf.truncated_normal(shape = [120, 84], mean = mu, stddev = sigma), name='wfc2')
+    bfc2 = tf.Variable(tf.zeros(84), name='bfc2')
     fc2mat = tf.matmul(fc1dropout, wfc2)
     fc2out = tf.add(fc2mat, bfc2)
     
@@ -66,8 +66,8 @@ def LeNet_V1(x, keepProbDropout):
     fc2dropout = tf.nn.dropout(fc2relu, keepProbDropout)
 
     # TODO: Layer 5: Fully Connected. Input = 84. Output = 10.
-    wfc3 = tf.Variable(tf.truncated_normal(shape = [84, 43], mean = mu, stddev = sigma))
-    bfc3 = tf.Variable(tf.zeros(43))
+    wfc3 = tf.Variable(tf.truncated_normal(shape = [84, 43], mean = mu, stddev = sigma), name='wfc3')
+    bfc3 = tf.Variable(tf.zeros(43), name='bfc3')
     fc3mat = tf.matmul(fc2dropout, wfc3)
     fc3out = tf.add(fc3mat, bfc3)
     
@@ -218,6 +218,33 @@ def trainNetwork (trainImages, trainLabels, validImages, validLabels, trainingTe
 				validationAccList.append(lastValidAcc)
 
 	return batchesList, lossList, trainingAccList, validationAccList
+
+
+def testNetwork(testImages, testLabels, accuracyTensor, X_ph, Y_ph, keepProb_ph, batchSize = 50):
+
+	batchCount = int(np.ceil(len(testImages)/batchSize))
+	session = tf.get_default_session()
+
+	testImages, testLabels = shuffle(testImages, testLabels)
+
+	testAccBatchSum = 0
+
+	for batch_i in range(batchCount):
+		# Get the batch of training images and labels
+		batchStart = batch_i*batchSize
+		batchEnd = batchStart + batchSize
+		batchTestImages = testImages[batchStart:batchEnd]
+		batchTestLabels = testLabels[batchStart:batchEnd]
+
+		# Calculates accuracy of the current batch in order to get test accuracy
+		testAccFeedDict = {X_ph: batchTestImages, Y_ph: batchTestLabels, keepProb_ph: 1.0}
+		batchTestAcc = session.run(accuracyTensor, feed_dict = testAccFeedDict)
+		testAccBatchSum += batchTestAcc
+
+	testAccuracy = testAccBatchSum/batchCount
+
+	return testAccuracy
+
 
 
 

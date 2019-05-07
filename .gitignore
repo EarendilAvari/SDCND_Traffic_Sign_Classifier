@@ -1,2 +1,8 @@
 # Ignore train data folder
 TrainData/
+
+# Ignore data of saved models
+ModelSaved01/
+ModelSaved02/
+ModelSaved03/
+ModelSaved04/
