@@ -81,8 +81,8 @@ def LeNet_Improved(x, keepProbDropout):
     sigma = 0.1
     
     # TODO: Layer 1: Convolutional. Input = 32x32x3. Output = 32x32x10.
-    wc1 = tf.Variable(tf.truncated_normal(shape = [5,5,3,10], mean = mu, stddev = sigma))
-    bc1 = tf.Variable(tf.zeros(10))
+    wc1 = tf.Variable(tf.truncated_normal(shape = [5,5,3,10], mean = mu, stddev = sigma), name='imp_wc1')
+    bc1 = tf.Variable(tf.zeros(10), name='imp_bc1')
     stridesc1 = [1,1,1,1]
     conv1mat = tf.nn.conv2d(x, wc1, stridesc1, padding = 'SAME')
     conv1out = tf.nn.bias_add(conv1mat, bc1)
@@ -96,8 +96,8 @@ def LeNet_Improved(x, keepProbDropout):
     pool1out = tf.nn.max_pool(conv1relu, ksizep1, stridesp1, padding = 'SAME')
     
     # TODO: Layer 2: Convolutional. Input = 16x16x10, Output = 16x16x18.
-    wc2 = tf.Variable(tf.truncated_normal(shape = [4,4,10,18], mean = mu, stddev = sigma))
-    bc2 = tf.Variable(tf.zeros(18))
+    wc2 = tf.Variable(tf.truncated_normal(shape = [4,4,10,18], mean = mu, stddev = sigma), name='imp_wc2')
+    bc2 = tf.Variable(tf.zeros(18), name='imp_bc2')
     stridesc2 = [1,1,1,1]
     conv2mat = tf.nn.conv2d(pool1out, wc2, stridesc2, padding = 'SAME')
     conv2out = tf.nn.bias_add(conv2mat, bc2)
@@ -111,8 +111,8 @@ def LeNet_Improved(x, keepProbDropout):
     pool2out = tf.nn.max_pool(conv2relu, ksize2, stridesp2, padding = 'SAME')
 
     # TODO: Layer 3: Convolutional. Input = 8x8x18, Output = 6x6x30.
-    wc3 = tf.Variable(tf.truncated_normal(shape = [3,3,18,30], mean = mu, stddev = sigma))
-    bc3 = tf.Variable(tf.zeros(30))
+    wc3 = tf.Variable(tf.truncated_normal(shape = [3,3,18,30], mean = mu, stddev = sigma), name='imp_wc3')
+    bc3 = tf.Variable(tf.zeros(30), name='imp_bc3')
     stridesc3 = [1,1,1,1]
     conv3mat = tf.nn.conv2d(pool2out, wc3, stridesc3, padding = 'VALID')
     conv3out = tf.nn.bias_add(conv3mat, bc3)
@@ -124,8 +124,8 @@ def LeNet_Improved(x, keepProbDropout):
     convFlatten = tf.contrib.layers.flatten(conv3relu)
     
     # TODO: Layer 4: Fully Connected. Input = 1080. Output = 490.
-    wfc1 = tf.Variable(tf.truncated_normal(shape = [1080, 490], mean = mu, stddev = sigma))
-    bfc1 = tf.Variable(tf.zeros(490))
+    wfc1 = tf.Variable(tf.truncated_normal(shape = [1080, 490], mean = mu, stddev = sigma), name='imp_wfc1')
+    bfc1 = tf.Variable(tf.zeros(490), name='imp_bfc1')
     fc1mat = tf.matmul(convFlatten, wfc1)
     fc1out = tf.add(fc1mat, bfc1)
     
@@ -136,8 +136,8 @@ def LeNet_Improved(x, keepProbDropout):
     fc1dropout = tf.nn.dropout(fc1relu, keepProbDropout)
 
     # TODO: Layer 5: Fully Connected. Input = 490. Output = 220.
-    wfc2 = tf.Variable(tf.truncated_normal(shape = [490, 220], mean = mu, stddev = sigma))
-    bfc2 = tf.Variable(tf.zeros(220))
+    wfc2 = tf.Variable(tf.truncated_normal(shape = [490, 220], mean = mu, stddev = sigma), name='imp_wfc2')
+    bfc2 = tf.Variable(tf.zeros(220), name='imp_bfc2')
     fc2mat = tf.matmul(fc1dropout, wfc2)
     fc2out = tf.add(fc2mat, bfc2)
     
@@ -148,8 +148,92 @@ def LeNet_Improved(x, keepProbDropout):
     fc2dropout = tf.nn.dropout(fc2relu, keepProbDropout)
 
     # TODO: Layer 6: Fully Connected. Input = 220. Output = 43.
-    wfc3 = tf.Variable(tf.truncated_normal(shape = [220, 43], mean = mu, stddev = sigma))
-    bfc3 = tf.Variable(tf.zeros(43))
+    wfc3 = tf.Variable(tf.truncated_normal(shape = [220, 43], mean = mu, stddev = sigma), name='imp_wfc3')
+    bfc3 = tf.Variable(tf.zeros(43), name='imp_bfc3')
+    fc3mat = tf.matmul(fc2dropout, wfc3)
+    fc3out = tf.add(fc3mat, bfc3)
+
+    # Logits
+    logits = fc3out
+    
+    return logits
+
+
+def LeNet_Improved_Load(x, keepProbDropout):    
+    # Arguments used for tf.truncated_normal, randomly defines variables for the weights and biases for each layer
+    mu = 0
+    sigma = 0.1
+    
+    # TODO: Layer 1: Convolutional. Input = 32x32x3. Output = 32x32x10.
+    wc1 = tf.get_default_graph().get_tensor_by_name('imp_wc1:0')
+    bc1 = tf.get_default_graph().get_tensor_by_name('imp_bc1:0')
+    stridesc1 = [1,1,1,1]
+    conv1mat = tf.nn.conv2d(x, wc1, stridesc1, padding = 'SAME')
+    conv1out = tf.nn.bias_add(conv1mat, bc1)
+    
+    # TODO: Activation.
+    conv1relu = tf.nn.relu(conv1out)
+
+    # TODO: Pooling. Input = 32x32x10. Output = 16x16x10.
+    stridesp1 = [1,2,2,1]
+    ksizep1 = [1,2,2,1]
+    pool1out = tf.nn.max_pool(conv1relu, ksizep1, stridesp1, padding = 'SAME')
+    
+    # TODO: Layer 2: Convolutional. Input = 16x16x10, Output = 16x16x18.
+    wc2 = tf.get_default_graph().get_tensor_by_name('imp_wc2:0')
+    bc2 = tf.get_default_graph().get_tensor_by_name('imp_bc2:0')
+    stridesc2 = [1,1,1,1]
+    conv2mat = tf.nn.conv2d(pool1out, wc2, stridesc2, padding = 'SAME')
+    conv2out = tf.nn.bias_add(conv2mat, bc2)
+    
+    # TODO: Activation.
+    conv2relu = tf.nn.relu(conv2out)
+
+    # TODO: Pooling. Input = 16x16x18. Output = 8x8x18.
+    stridesp2 = [1,2,2,1]
+    ksize2 = [1,2,2,1]
+    pool2out = tf.nn.max_pool(conv2relu, ksize2, stridesp2, padding = 'SAME')
+
+    # TODO: Layer 3: Convolutional. Input = 8x8x18, Output = 6x6x30.
+    wc3 = tf.get_default_graph().get_tensor_by_name('imp_wc3:0')
+    bc3 = tf.get_default_graph().get_tensor_by_name('imp_bc3:0')
+    stridesc3 = [1,1,1,1]
+    conv3mat = tf.nn.conv2d(pool2out, wc3, stridesc3, padding = 'VALID')
+    conv3out = tf.nn.bias_add(conv3mat, bc3)
+
+    # Activation 
+    conv3relu = tf.nn.relu(conv3out)
+
+    # Flatten output of layer 3 from 6x6x30 to 1080
+    convFlatten = tf.contrib.layers.flatten(conv3relu)
+    
+    # TODO: Layer 4: Fully Connected. Input = 1080. Output = 490.
+    wfc1 = tf.get_default_graph().get_tensor_by_name('imp_wfc1:0')
+    bfc1 = tf.get_default_graph().get_tensor_by_name('imp_bfc1:0')
+    fc1mat = tf.matmul(convFlatten, wfc1)
+    fc1out = tf.add(fc1mat, bfc1)
+    
+    # TODO: Activation.
+    fc1relu = tf.nn.relu(fc1out)
+    
+    # Dropout 
+    fc1dropout = tf.nn.dropout(fc1relu, keepProbDropout)
+
+    # TODO: Layer 5: Fully Connected. Input = 490. Output = 220.
+    wfc2 = tf.get_default_graph().get_tensor_by_name('imp_wfc2:0')
+    bfc2 = tf.get_default_graph().get_tensor_by_name('imp_bfc2:0')
+    fc2mat = tf.matmul(fc1dropout, wfc2)
+    fc2out = tf.add(fc2mat, bfc2)
+    
+    # TODO: Activation.
+    fc2relu = tf.nn.relu(fc2out)
+    
+    # Dropout
+    fc2dropout = tf.nn.dropout(fc2relu, keepProbDropout)
+
+    # TODO: Layer 6: Fully Connected. Input = 220. Output = 43.
+    wfc3 = tf.get_default_graph().get_tensor_by_name('imp_wfc3:0')
+    bfc3 = tf.get_default_graph().get_tensor_by_name('imp_bfc3:0')
     fc3mat = tf.matmul(fc2dropout, wfc3)
     fc3out = tf.add(fc3mat, bfc3)
 
@@ -244,6 +328,7 @@ def testNetwork(testImages, testLabels, accuracyTensor, X_ph, Y_ph, keepProb_ph,
 	testAccuracy = testAccBatchSum/batchCount
 
 	return testAccuracy
+
 
 
 
