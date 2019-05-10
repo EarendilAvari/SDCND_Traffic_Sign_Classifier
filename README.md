@@ -175,7 +175,7 @@ There is also a negative aspect: the original neural network has 64811 parameter
 
 The new function is called "LeNet_Improved" and is located in the file "LeNetV1.py"
 
-#### Training of improved model
+### Training of improved model
 
 #### Training with selected initial conditions
 
@@ -225,7 +225,7 @@ By increasing the epochs to 20 the validation accuracy increased to 96%. Here th
 
 It seems that the model will not get any better with this dataset, probably because some images are very dark and therefore difficult to identify. If that is the problem, a good idea would be to increase the contrast or the brightness of the images, but that would mean that this calibration would also be necessary on the system where the model would be used, what may not be possible. Therefore this is the definitive version of the model on this project.
 
-#### Test accuracy of last trained model
+### Test accuracy of last trained model
 
 In order to calculate the test accuracy of a model, the function "testNetwork" was programmed, which can be found on the file LeNetV1.py. This function takes the following arguments:
 
@@ -241,7 +241,7 @@ The function first shuffles the data and then calculates the accuracy on little 
 
 Using this function, the test accuracy obtained by the model was of 95,5%, very close to the validation accuracy of 96%, this is a very good value since the test data are images that were never seen by the model and therefore the test accuracy is always smaller than the validation accuracy.
 
-#### Testing on new images
+### Testing on new images
 
 Five new images were chosen in order to test the model with them.
 
@@ -259,7 +259,7 @@ Here it is shown how the original images and their resized and normalized versio
 
 By running the model on these five images almost perfect accuracy was reached. Only the stop sign with snow was wrongly classified. This is analysed now with more details using the 5 highest probabilities the model returns for these images.
 
-##### Analysis of results image 1
+#### Analysis of results image 1
 
 Following is a table of the the highest 5 probabilities for the image 1 "keep left".
 
@@ -285,7 +285,7 @@ The other two probabilities are very low 0.0029% for the label 40 (Roundabout ma
 
 The label 38 corresponding to the keep right label was not between the 5 highest probabilities as one could believe by analising the distribuition of the dataset where the keep right sign appears way more often than the keep left one.
 
-##### Analysis of results image 2
+#### Analysis of results image 2
 
 The next image is a 30 Km/h speed limit sign with a small additional sign at the bottom.
 
@@ -301,7 +301,7 @@ The next image is a 30 Km/h speed limit sign with a small additional sign at the
 
 For this image the model is very sure that the image is 30 km/h with a probability of 99.99999% of being label 1 (Speed limit 30 km/h). The next probability is of 0,000008% is for the label 0 (20 km/h). The other probabilities are extremely low for the label 2 (Speed limit 50 km/h), label 14 (Stop) and label 3 (Speed limit 60 km/h) in decreasing order. It is interesting to remark that the stop sign is more probable than other speed limit signs, which could indicate that for the model is more important the text in the middle of the image than the background color. It looks that the model recognizes very well the difference between 2, 3 and 5.
 
-##### Analysis of results image 3
+#### Analysis of results image 3
 
 This image is a stop sign with snow on it covering the word "STOP".
 
@@ -319,7 +319,7 @@ This image is a stop sign with snow on it covering the word "STOP".
  
 The model did not have the possibility here to have this answer right maybe because it have never seen a snowed stop sign during training. 
  
-##### Analysis of results image 4
+#### Analysis of results image 4
 
 The next image is a "wild animals crossing" sign with the peculiarity that the deer on it has wings (maybe because some person drawn them).
 
@@ -335,7 +335,7 @@ The next image is a "wild animals crossing" sign with the peculiarity that the d
 
 Here is also the model very certain about its prediction. With 99.953% it predicts that the image is a "wild animals crossing" sign (label 31). The next probability is of 0.0257% for label 21 (Double curve), this sign has a similar drawing on it with almost the same form. The next probability is 0.0211% for the label 23 (Slippery road), this sign has a car drawing and two drawings of curve lines on it which have the same orientation than the double curve on the sign 21. The next probabilities are very low for the labels 29 (Bicycles crossing) and 25 (Road work) respectivelly, these signs are also red triangles with white background and black symbols on it, but the symbols have completely other forms.
 
-##### Analysis of results image 5
+#### Analysis of results image 5
 
 The last image is a 60 km/h speed limit sign with black background because it is electronic.
 
@@ -355,7 +355,7 @@ The reason why for this image the probabilities are more varied is for sure not 
 
 Images like this or the stop sign with snow on the validation and test data can result on wrong answers by the model and therefore a lower accuracy than the training accuracy.
 
-#### Visualization of convolutional layers results
+### Visualization of convolutional layers results
 
 In order to visualize the outputs of the convolutional layers and with that know more deeply what the model finds important, it is needed to extract the tensors which execute the convolution from the saved model. In order to do that the tensors conv1out, conv2out and conv3out of the function "LeNet_Improved" are needed. In order get them, the operation "tf.get_default_graph().get_tensor_by_name" is used. This method takes as argument the name of a tensor. Since for these tensors no names were defined at the moment the model was trained, they are called as default "BiasAdd", "BiasAdd_1" and "BiasAdd_2".
 
@@ -401,7 +401,7 @@ Most feature maps have a white circle on the center, which means, this is the mo
 
 It could be possible that a model with one less convolutional layer would doubt more about this prediction since the model would not be looking for so complicated patterns. The same could be said about the last image. Since the model is capable of finding complicated patterns like diagonal lines or circles, it is very sure about its predictions when it finds one of those patterns. That could explain the very high probabilities for the test images (being right or not).
 
-#### Summary and conclusions
+### Summary and conclusions
 Convolutional neural networks are a very strong tool in order to classify images. The first convolutional layer looks for simple patterns like lines. The following layers look for more sofisticated forms. Then the output of the last convolutional layer gets classified using fully connected layers.
 
 One of the most important steps in order to get a high accuracy of the model is to choose the right optimizer. Alone by choosing the right optimizer and some roughtly selected hyperparameters, a very good accuracy can be achieved.
