@@ -209,15 +209,15 @@ The following are 100 randomly chosen augmented images of the training data:
 
 From visualising the new augmented data, it can be seen how now rotated, zoomed and translated images are present on the dataset.
 
-#### Training of the model with augmented data
+### Training of the model with augmented data
 
-##### Using improved model with last chosen hyperparameters
+#### Using improved model with last chosen hyperparameters
 
 ![ Image13](./ImgsReport/13_LeNetImprovedTrainingResultsAug01.png  "TrainingAugmented")
 
 The model reached 95% accuracy like before without the augmented data. But here it can be seen that the model can still learn a little bit having more epochs. Let's increase the number of epochs to 20 and see what happens.
 
-##### Using 10 more epochs
+#### Using 10 more epochs
 
 ![ Image14](./ImgsReport/14_LeNetImprovedTrainingResultsAug02.png  "TrainingAugmented2")
 
